@@ -1,0 +1,4 @@
+# ignore all PPM files
+*.ppm
+# ignore this executable
+ppmandel
