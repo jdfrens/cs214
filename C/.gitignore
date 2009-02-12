@@ -1,4 +1,5 @@
-# ignore all PPM files
+# ignore all image files
 *.ppm
+*.gif
 # ignore this executable
 ppmandel
