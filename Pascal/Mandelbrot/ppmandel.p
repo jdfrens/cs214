@@ -16,7 +16,7 @@
 	 WriteLn("15");
       end;
    
-      procedure plotPoint(x, y : Real);
+      procedure PlotPoint(x, y : Real);
       var
 	 a, b, aa, bb : Real;
 	 iters	      : Integer;
@@ -36,9 +36,9 @@
 	    iters := iters + 1;
 	 end;
 	 if (iters > MAX_ITERS) then
-	    WriteLn("0 0 0\n")
+	    WriteLn("0 0 0")
 	 else
-	    WriteLn("15 15 15\n");
+	    WriteLn("15 15 15");
       end;
 
       procedure Mandelbrot(x0, y0, x1, y1 : Real);
@@ -56,18 +56,19 @@
 	    begin
 	       PlotPoint(x, y);
 	       x := x + delta_x;
-	    end;
+	    end; { for w }
 	    y := y - delta_y;
-	 end;
-      end;
-   begin
+	 end; { for h }
+      end; { procedure Mandelbrot }
+
+   begin { Plot }
       x0 := -2.0;
       y0 := -1.2;
       x1 := 1.2;
       y1 := 1.2;
       Prefix();
       Mandelbrot(x0, y0, x1, y1);
-   end;
+   end; { Plot }
 
    begin
       Plot

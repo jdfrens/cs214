@@ -1,4 +1,7 @@
-all: mandelbrot.ppm
+all: mandelbrot.gif
+
+mandelbrot.gif: mandelbrot.ppm
+	convert mandelbrot.ppm mandelbrot.gif
 
 mandelbrot.ppm: ppmandel
 	ppmandel > mandelbrot.ppm
