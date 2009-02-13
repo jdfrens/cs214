@@ -36,11 +36,10 @@ int main(int argc, char** argv) {
 void ppmMandelbrot(double x0, double y0, double x1, double y1) {
   double delta_x = (x1 - x0) / (WIDTH - 1);
   double delta_y = (y1 - y0) / (HEIGHT - 1);
-  double x, y;
   int h, w;
-  y = y1;
+  double y = y1;
   for (h = 0; h < HEIGHT; h++) {
-    x = x0;
+    double x = x0;
     for (w = 0; w < WIDTH; w++) {
       plotPoint(x, y);
       x += delta_x;
