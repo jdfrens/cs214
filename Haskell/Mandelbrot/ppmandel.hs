@@ -20,35 +20,22 @@ max_iters = 512
 main :: IO ()
 main = do
   args <- getArgs
-  let
-    [x0, y0, x1, y1] = params args
-    in
-      mapM_ putStrLn (ppmPrefix ++ (ppmMandelbrot x0 y0 x1 y1))
-      
-params :: [String] -> [Float]
-params args = map read args
+  mapM_ putStrLn ppmPrefix
+  mapM_ putStrLn $ ppmMandelbrot $ map read args
 
 ppmPrefix :: [String]
 ppmPrefix = ["P3", show mandelWidth, show mandelHeight, "15"]
 
-ppmMandelbrot :: Float -> Float -> Float -> Float -> [String]
-ppmMandelbrot x0 y0 x1 y1 = 
+ppmMandelbrot :: [Float] -> [String]
+ppmMandelbrot [x0, y0, x1, y1] = 
   let
     delta_x = (x1 - x0) / (fromInteger mandelWidth - 1.0)
     delta_y = (y1 - y0) / (fromInteger mandelHeight - 1.0)
-    ys = coords y0 delta_y mandelHeight
-    xs = coords x0 delta_x mandelWidth
+    ys = [y0, y0 + delta_y..y1]
+    xs = [x0, x0 + delta_x..x1]
     points = [ (x,y) | y <- reverse ys, x <- xs ]
   in
     map plotPoint points
-
-sorter (x0,y0) (x1,y1)
-  | x0 == x1 && y0 == y1  = EQ
-  | y0 > y1 = LT
-  | y1 < y0 = GT
-  | y0 == y1 && x0 < x1 = LT
-  | y0 == y1 && x0 > x1 = GT
-  | otherwise = EQ
 
 coords :: Float -> Float -> Integer -> [Float]
 coords z delta_z n = [ z + delta | delta <- deltas ]
