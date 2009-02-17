@@ -1,0 +1,8 @@
+task :compile do
+  system "ghc -O2 --make ppmandel.hs"
+end
+
+task :run => :compile do
+  system "ppmandel -2.0 -1.2 1.2 1.2 > mandelbrot.ppm"
+  system "convert mandelbrot.ppm mandelbrot.gif"
+end
