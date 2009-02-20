@@ -1,8 +1,21 @@
+require 'rake/clean'
+
+SRC = FileList['*.hs']
+CLEAN.include('*~')
+CLOBBER.include('*.hi', '*.o', "a.out", "ppmandel")
+CLOBBER.include("*.ppm", "*.gif")
+
 task :compile do
-  system "ghc -O2 --make ppmandel.hs"
+  ["ppmandel.hs", "ppmjulia.hs"].each do |source|
+    system "ghc -O2 --make #{source}"
+  end
 end
 
 task :run => :compile do
+  puts "generating mandelbrot"
   system "ppmandel -2.0 -1.2 1.2 1.2 > mandelbrot.ppm"
   system "convert mandelbrot.ppm mandelbrot.gif"
+  puts "generating julia"
+  system "ppmjulia 1.1 -2.0 -1.2 1.2 1.2 > julia.ppm"
+  system "convert julia.ppm julia.gif"
 end
