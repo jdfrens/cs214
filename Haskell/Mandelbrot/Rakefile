@@ -2,7 +2,7 @@ require 'rake/clean'
 
 SRC = FileList['*.hs']
 CLEAN.include('*~')
-CLOBBER.include('*.hi', '*.o', "a.out", "ppmandel")
+CLOBBER.include('*.hi', '*.o', "a.out", "ppmandel", "ppmjulia")
 CLOBBER.include("*.ppm", "*.gif")
 
 task :compile do
@@ -12,10 +12,21 @@ task :compile do
 end
 
 task :run => :compile do
+  mandelbrot
+  julia "random", -0.74543, 0.11301
+  julia "golden", -0.6180339887498948482045868343656381, 0.0
+  julia "pruim", 17.0, 0.0
+  julia "pruim2", -0.5, -1.0 / Math.sqrt(17.0)
+end
+
+def mandelbrot
   puts "generating mandelbrot"
   system "ppmandel -2.0 -1.2 1.2 1.2 > mandelbrot.ppm"
   system "convert mandelbrot.ppm mandelbrot.gif"
-  puts "generating julia"
-  system "ppmjulia 1.1 -2.0 -1.2 1.2 1.2 > julia.ppm"
-  system "convert julia.ppm julia.gif"
+end
+
+def julia(name, cx, cy)
+  puts "generating julia: #{name}"
+  system "ppmjulia #{cx} #{cy} -2.0 -1.5 2.0 1.5 > #{name}.ppm"
+  system "convert #{name}.ppm #{name}.gif"
 end

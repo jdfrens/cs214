@@ -16,4 +16,4 @@ main = do
   mapM_ putStrLn $ PPM.ppmPrefix fractalWidth fractalHeight
   mapM_ putStrLn . generate $ map read args
 
-generate [c, x0, y0, x1, y1] = ppmMandelbrot x0 y0 x1 y1
+generate [cx, cy, x0, y0, x1, y1] = ppmPlot (julia (cx, cy)) x0 y0 x1 y1
