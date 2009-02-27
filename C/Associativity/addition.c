@@ -7,6 +7,10 @@ static double ADJUST = 2.0;
 static REPS = 500;
 
 int main() {
+  /* 
+   * xs will be an array of floating-point numbers ranging from
+   * START to START + NUM_OF_VALUES * ADJUST in steps of ADJUST.
+   */
   double xs[NUM_OF_VALUES];
   int i, iter;
   
@@ -17,6 +21,7 @@ int main() {
     x *= ADJUST;
   }
   
+  /* Adds from smallest to largest.  Each value is added in REPS times. */
   printf("Summing up...\n");
   double sumUp = 0.0;
   for (i = 0; i < NUM_OF_VALUES; i++) {
@@ -25,6 +30,7 @@ int main() {
     }
   }
   
+  /* Adds from largest to smallest.  Each value is added in REPS times. */
   printf("Summing down...\n");
   double sumDown = 0.0;
   for (i = NUM_OF_VALUES - 1; i >= 0; i--) {
