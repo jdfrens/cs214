@@ -1,2 +1,5 @@
+*.pdf
+*.ps
+*.tmproj
 *.o
 a.out
