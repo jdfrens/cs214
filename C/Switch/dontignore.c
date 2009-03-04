@@ -1,0 +1,3 @@
+void dontIgnoreMe(float values[]) {
+  // do nothing...
+}

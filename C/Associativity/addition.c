@@ -20,6 +20,7 @@ int main() {
     xs[i] = x;
     x *= ADJUST;
   }
+  printf("min: %f  max: %f", xs[0], xs[NUM_OF_VALUES-1]);
   
   /* Adds from smallest to largest.  Each value is added in REPS times. */
   printf("Summing up...\n");

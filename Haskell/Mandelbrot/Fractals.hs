@@ -40,10 +40,10 @@ module Fractals (fractalWidth, fractalHeight, ppmPlot, mandelbrot, julia) where
         | otherwise       = plotPoint (z * z + c) (iters-1)
       hasEscaped z = magnitude (z * z) > max_size
 
-  julia (cx, cy) (x,y) = plotPoint zero max_iters
+  julia (cx, cy) (x,y) = plotPoint z max_iters
     where
-      c    = cx :+ cy
-      zero = x :+ y
+      c  = cx :+ cy
+      z  = x :+ y
       plotPoint z iters
         | iters == 0      = "0 0 0"
         | hasEscaped z    = "15 15 15"
