@@ -1,6 +1,6 @@
 #!/usr/bin/perl -s
 
-$cases = 2000;
+$cases = shift @ARGV;
 print "#include <stdio.h>\n";
 print "#include \"mytime.h\"\n";
 print "#include \"dontignore.h\"\n";
