@@ -6,5 +6,4 @@
 
 module PPM where
   
-  ppmPrefix :: (Show a) => a -> a -> [String]
-  ppmPrefix width height = ["P3", show width, show height, "15"]
+ppmPrefix width height = ["P3", show width, show height, "15"]
