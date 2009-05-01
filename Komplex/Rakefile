@@ -1,0 +1,4 @@
+task :compile do
+  sh "g++ -c Komplex.cpp"
+  sh "javac Komplex.java"
+end

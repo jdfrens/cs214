@@ -3,4 +3,5 @@
 *.ps
 *.tmproj
 *.o
+*.class
 a.out
