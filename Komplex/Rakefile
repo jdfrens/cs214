@@ -8,4 +8,5 @@ task :run => :compile do
   sh "./komplex++"
   sh "./komplex"
   sh "ruby komplex.rb"
+  sh "java KomplexMain"
 end
