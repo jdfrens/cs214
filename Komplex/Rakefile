@@ -1,5 +1,11 @@
 task :compile do
-  sh "gcc -c Komplex.c"
-  sh "g++ -c Komplex.cpp"
-  sh "javac Komplex.java"
+  sh "g++ -o komplex++ Komplex.cpp"
+  sh "gcc -o komplex Komplex.c"
+  sh "javac *.java"
+end
+
+task :run => :compile do
+  sh "./komplex++"
+  sh "./komplex"
+  sh "ruby komplex.rb"
 end
