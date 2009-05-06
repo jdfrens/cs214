@@ -46,7 +46,7 @@ public:
   
   virtual string toString() {
     ostringstream ss;
-    ss << myR << " cis " << myPhi; // r cis phi == r (cos phi + i sin phi)
+    ss << myR << " cis " << myPhi;
     return ss.str();
   }
 
