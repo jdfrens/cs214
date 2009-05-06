@@ -11,3 +11,7 @@ task :run => :compile do
   sh "java KomplexMain"
   sh "./komplex++"
 end
+
+task :ps do
+  sh "a2ps -o komplex.ps README.txt typescript *.c *.js *.rb *.java *.cpp"
+end
