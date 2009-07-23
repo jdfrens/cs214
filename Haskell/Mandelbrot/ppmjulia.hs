@@ -7,14 +7,16 @@
 module Main where
 
 import System (getArgs)
-import qualified PPM
+import PPM
 import Fractals
+
+size = Dimension 512 384
 
 main :: IO ()
 main = do
   args <- getArgs
-  mapM_ putStrLn $ PPM.ppmPrefix fractalWidth fractalHeight
+  mapM_ putStrLn $ ppmPrefix size
   mapM_ putStrLn . generate $ map read args
 
-generate [cx, cy, x0, y0, x1, y1] = ppmPlot julia' x0 y0 x1 y1
-	      	      	      	      where julia' = (julia (cx, cy))
+generate [cx, cy, x0, y0, x1, y1] = plot julia' blackAndWhite size (Point x0 y0) (Point x1 y1)
+	      	      	      	      where julia' = (julia (Point cx cy))

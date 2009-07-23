@@ -4,28 +4,30 @@
   Creative Commons Attribution-Share Alike 3.0 United States License
 -}
 
-module Fractals (fractalWidth, fractalHeight, ppmPlot, mandelbrot, julia) where
+module Fractals (Dimension(..), Point(..), plot, mandelbrot, julia) where
   
 import List
 import Complex
 
-fractalWidth = 512
-fractalHeight = 384
+data Dimension a = Dimension a a
+  deriving (Show, Eq)
+data Point a = Point a a
+  deriving (Show, Eq)
 
 max_size = 4.0
 max_iters = 512
 
-ppmPlot f x0 y0 x1 y1 = 
+plot f color (Dimension width height) (Point x0 y0) (Point x1 y1) = 
   let
-    delta_x = (x1 - x0) / (fromInteger fractalWidth - 1.0)
-    delta_y = (y1 - y0) / (fromInteger fractalHeight - 1.0)
+    delta_x = (x1 - x0) / (fromInteger width - 1.0)
+    delta_y = (y1 - y0) / (fromInteger height - 1.0)
     ys = [y0, y0 + delta_y..y1]
     xs = [x0, x0 + delta_x..x1]
-    points = [ (x,y) | y <- reverse ys, x <- xs ]
+    points = [ (Point x y) | y <- reverse ys, x <- xs ]
   in
     map f points
   
-mandelbrot (x,y) = plotPoint zero max_iters
+mandelbrot (Point x y) = plotPoint zero max_iters
   where
     zero = 0 :+ 0
     c    = x :+ y
@@ -35,7 +37,7 @@ mandelbrot (x,y) = plotPoint zero max_iters
       | otherwise       = plotPoint (z * z + c) (iters-1)
     hasEscaped z = magnitude (z * z) > max_size
 
-julia (cx, cy) (x,y) = plotPoint z max_iters
+julia (Point cx cy) (Point x y) = plotPoint z max_iters
   where
     c  = cx :+ cy
     z  = x :+ y

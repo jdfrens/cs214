@@ -3,7 +3,9 @@ require 'rake/clean'
 SRC = FileList['*.hs']
 CLEAN.include('*~')
 CLOBBER.include('*.hi', '*.o', "a.out", "ppmandel", "ppmjulia")
-CLOBBER.include("*.ppm", "*.gif")
+CLOBBER.include("images/*")
+
+task :default => :run
 
 task :compile do
   ["ppmandel.hs", "ppmjulia.hs"].each do |source|
@@ -11,7 +13,7 @@ task :compile do
   end
 end
 
-task :run => :compile do
+task :run => [:setup, :compile] do
   mandelbrot
   julia "random", -0.74543, 0.11301
   julia "golden", -0.6180339887498948482045868343656381, 0.0
@@ -19,14 +21,18 @@ task :run => :compile do
   julia "pruim2", -0.5, -1.0 / Math.sqrt(17.0)
 end
 
+task :setup do
+  system "mkdir -p images"
+end
+
 def mandelbrot
   puts "generating mandelbrot"
-  system "ppmandel -2.0 -1.2 1.2 1.2 > mandelbrot.ppm"
-  system "convert mandelbrot.ppm mandelbrot.gif"
+  system "ppmandel -2.0 -1.2 1.2 1.2 > images/mandelbrot.ppm"
+  system "convert images/mandelbrot.ppm images/mandelbrot.gif"
 end
 
 def julia(name, cx, cy)
   puts "generating julia: #{name}"
-  system "ppmjulia #{cx} #{cy} -2.0 -1.5 2.0 1.5 > #{name}.ppm"
-  system "convert #{name}.ppm #{name}.gif"
+  system "ppmjulia #{cx} #{cy} -2.0 -1.5 2.0 1.5 > images/#{name}.ppm"
+  system "convert images/#{name}.ppm images/#{name}.gif"
 end

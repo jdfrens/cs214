@@ -6,4 +6,9 @@
 
 module PPM where
   
-ppmPrefix width height = ["P3", show width, show height, "15"]
+import Fractals
+  
+ppmPrefix (Dimension width height) = ["P3", show width, show height, "15"]
+
+blackAndWhite 0 = "0 0 0"
+blackAndWhite x = "15 15 15"
