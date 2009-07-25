@@ -2,23 +2,22 @@ require 'rake/clean'
 
 SRC = FileList['*.hs']
 CLEAN.include('*~')
-CLOBBER.include('*.hi', '*.o', "a.out", "ppmandel", "ppmjulia")
+CLOBBER.include('*.hi', '*.o', "a.out", "nofrac")
 CLOBBER.include("images/*")
 
 task :default => :run
 
 task :compile do
-  ["ppmandel.hs"].each do |source|
+  ["nofrac.hs"].each do |source|
     sh "ghc -O2 --make #{source}"
   end
 end
 
 task :run => [:setup, :compile] do
   mandelbrot
-  julia "random", "~0.74543", 0.11301
-  julia "golden", "~0.6180339887498948482045868343656381", 0.0
-  julia "pruim", 17.0, 0.0
-  julia "pruim2", "~0.5", (-1.0 / Math.sqrt(17.0)).to_s.gsub("-", "~")
+  julia "random", "bw", "~0.74543", 0.11301
+  julia "golden", "wb", "~0.6180339887498948482045868343656381", 0.0
+  julia "pruim2", "wb", "~0.5", (-1.0 / Math.sqrt(17.0)).to_s.gsub("-", "~")
   convert
 end
 
@@ -33,12 +32,10 @@ task :setup do
 end
 
 def mandelbrot
-  puts "generating mandelbrot"
-  sh "ppmandel --color bw --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
-  sh "ppmandel --color wb --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/white-mandelbrot.ppm"
+  sh "nofrac --color bw --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
+  sh "nofrac --color wb --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/white-mandelbrot.ppm"
 end
 
-def julia(name, cx, cy)
-  puts "generating julia: #{name}"
-  sh "ppmandel #{cx} #{cy} ~2.0 ~1.5 2.0 1.5 > images/#{name}.ppm"
+def julia(name, color, cx, cy)
+  sh "nofrac --color #{color} #{cx} #{cy} ~2.0 ~1.5 2.0 1.5 > images/#{name}.ppm"
 end

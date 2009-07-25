@@ -42,7 +42,7 @@ julia color (Point cx cy) (Point x y) = plotPoint z max_iters
     c  = cx :+ cy
     z  = x :+ y
     plotPoint z iters
-      | iters == 0      = "0 0 0"
-      | hasEscaped z    = "15 15 15"
+      | iters == 0      = color iters
+      | hasEscaped z    = color iters
       | otherwise       = plotPoint (z * z + c) (iters-1)
     hasEscaped z = magnitude (z * z) > max_size

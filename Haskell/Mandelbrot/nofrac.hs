@@ -8,6 +8,8 @@ module Main where
 
 import System
 import System.Console.GetOpt
+import Control.Monad
+
 import Options
 import PPM
 import Fractals
@@ -19,11 +21,12 @@ main = do
   opts <- foldl (>>=) (return startOptions) actions
   let size = Dimension (optWidth opts) (optHeight opts)
   mapM_ putStrLn $ ppmPrefix size
-  mapM_ putStrLn . generate size (optColor opts) $ map coordinateParse nonOptions
+  mapM_ putStrLn . generate size (optColor opts) $ map coordinateParse nonOptions    
     
 generate size color [x0, y0, x1, y1] = 
-  plot (mandelbrot color) size (Point x0 y0) (Point x1 y1)
+  plot mandelbrot' size (Point x0 y0) (Point x1 y1)
+    where mandelbrot' = mandelbrot color
 generate size color [cx, cy, x0, y0, x1, y1] = 
   plot julia' size (Point x0 y0) (Point x1 y1)
-	  where julia' = (julia blackOnWhite (Point cx cy))
+	  where julia' = (julia color (Point cx cy))
 generate _ _ args = error $ show args ++ " not valid coordinates"
