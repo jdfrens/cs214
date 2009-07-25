@@ -27,8 +27,10 @@ end
 
 def mandelbrot
   puts "generating mandelbrot"
-  sh "ppmandel --width 1024 --height 768 ~2.0 ~1.2 1.2 1.2 > images/mandelbrot.ppm"
-  sh "convert images/mandelbrot.ppm images/mandelbrot.gif"
+  sh "ppmandel --color bw --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
+  sh "ppmandel --color wb --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/white-mandelbrot.ppm"
+  sh "convert images/black-mandelbrot.ppm images/black-mandelbrot.gif"
+  sh "convert images/white-mandelbrot.ppm images/white-mandelbrot.gif"
 end
 
 def julia(name, cx, cy)

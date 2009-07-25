@@ -10,8 +10,8 @@ import Fractals
   
 ppmPrefix (Dimension width height) = ["P3", show width, show height, "15"]
 
-blackAndWhite 0 = "0 0 0"
-blackAndWhite x = "15 15 15"
+blackOnWhite 0 = "0 0 0"
+blackOnWhite x = "15 15 15"
 
-whiteAndBlack 0 = "15 15 15"
-whiteAndBlack x = "0 0 0"
+whiteOnBlack 0 = "15 15 15"
+whiteOnBlack x = "0 0 0"
