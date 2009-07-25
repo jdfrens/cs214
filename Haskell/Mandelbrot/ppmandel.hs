@@ -23,5 +23,7 @@ main = do
     
 generate size color [x0, y0, x1, y1] = 
   plot (mandelbrot color) size (Point x0 y0) (Point x1 y1)
-generate _ _ args =
-  error $ show args ++ " not valid coordinates"
+generate size color [cx, cy, x0, y0, x1, y1] = 
+  plot julia' size (Point x0 y0) (Point x1 y1)
+	  where julia' = (julia blackOnWhite (Point cx cy))
+generate _ _ args = error $ show args ++ " not valid coordinates"
