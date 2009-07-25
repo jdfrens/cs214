@@ -9,16 +9,16 @@ task :default => :run
 
 task :compile do
   ["ppmandel.hs", "ppmjulia.hs"].each do |source|
-    system "ghc -O2 --make #{source}"
+    sh "ghc -O2 --make #{source}"
   end
 end
 
 task :run => [:setup, :compile] do
   mandelbrot
-  julia "random", -0.74543, 0.11301
-  julia "golden", -0.6180339887498948482045868343656381, 0.0
-  julia "pruim", 17.0, 0.0
-  julia "pruim2", -0.5, -1.0 / Math.sqrt(17.0)
+  # julia "random", -0.74543, 0.11301
+  # julia "golden", -0.6180339887498948482045868343656381, 0.0
+  # julia "pruim", 17.0, 0.0
+  # julia "pruim2", -0.5, -1.0 / Math.sqrt(17.0)
 end
 
 task :setup do
@@ -27,12 +27,12 @@ end
 
 def mandelbrot
   puts "generating mandelbrot"
-  system "ppmandel -2.0 -1.2 1.2 1.2 > images/mandelbrot.ppm"
-  system "convert images/mandelbrot.ppm images/mandelbrot.gif"
+  sh "ppmandel --width 1024 --height 768 ~2.0 ~1.2 1.2 1.2 > images/mandelbrot.ppm"
+  sh "convert images/mandelbrot.ppm images/mandelbrot.gif"
 end
 
 def julia(name, cx, cy)
   puts "generating julia: #{name}"
-  system "ppmjulia #{cx} #{cy} -2.0 -1.5 2.0 1.5 > images/#{name}.ppm"
-  system "convert images/#{name}.ppm images/#{name}.gif"
+  sh "ppmjulia #{cx} #{cy} -2.0 -1.5 2.0 1.5 > images/#{name}.ppm"
+  sh "convert images/#{name}.ppm images/#{name}.gif"
 end

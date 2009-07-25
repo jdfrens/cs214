@@ -18,5 +18,5 @@ main = do
   mapM_ putStrLn $ ppmPrefix size
   mapM_ putStrLn . generate $ map read args
 
-generate [cx, cy, x0, y0, x1, y1] = plot julia' blackAndWhite size (Point x0 y0) (Point x1 y1)
-	      	      	      	      where julia' = (julia (Point cx cy))
+generate [cx, cy, x0, y0, x1, y1] = plot julia' size (Point x0 y0) (Point x1 y1)
+	      	      	      	      where julia' = (julia blackAndWhite (Point cx cy))

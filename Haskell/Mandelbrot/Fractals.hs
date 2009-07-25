@@ -17,7 +17,7 @@ data Point a = Point a a
 max_size = 4.0
 max_iters = 512
 
-plot f color (Dimension width height) (Point x0 y0) (Point x1 y1) = 
+plot f (Dimension width height) (Point x0 y0) (Point x1 y1) = 
   let
     delta_x = (x1 - x0) / (fromInteger width - 1.0)
     delta_y = (y1 - y0) / (fromInteger height - 1.0)
@@ -27,17 +27,17 @@ plot f color (Dimension width height) (Point x0 y0) (Point x1 y1) =
   in
     map f points
   
-mandelbrot (Point x y) = plotPoint zero max_iters
+mandelbrot color (Point x y) = plotPoint zero max_iters
   where
     zero = 0 :+ 0
     c    = x :+ y
     plotPoint z iters
-      | iters == 0      = "0 0 0"
-      | hasEscaped z    = "15 15 15"
+      | iters == 0      = color iters
+      | hasEscaped z    = color iters
       | otherwise       = plotPoint (z * z + c) (iters-1)
     hasEscaped z = magnitude (z * z) > max_size
 
-julia (Point cx cy) (Point x y) = plotPoint z max_iters
+julia color (Point cx cy) (Point x y) = plotPoint z max_iters
   where
     c  = cx :+ cy
     z  = x :+ y
