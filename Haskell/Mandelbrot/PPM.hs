@@ -20,7 +20,7 @@ blackOnWhite _ = "256 256 256"
 whiteOnBlack 0 = "256 256 256"
 whiteOnBlack _ = "0 0 0"
 
-grayScale n = val ++ " " ++ "0" ++ " " ++ val
+grayScale n = val ++ " " ++ val ++ " " ++ val
   where val = show $ div (n * 256) 512
   
 red :: [Integer]

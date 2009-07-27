@@ -14,10 +14,13 @@ task :compile do
 end
 
 task :run => [:setup, :compile] do
-  mandelbrot
-  julia "random", "bw", "~0.74543", 0.11301
-  julia "golden", "wb", "~0.6180339887498948482045868343656381", 0.0
-  julia "pruim2", "wb", "~0.5", (-1.0 / Math.sqrt(17.0)).to_s.gsub("-", "~")
+  mandelbrot "black", "bw"
+  mandelbrot "white", "wb"
+  mandelbrot "gray", "gray"
+  mandelbrot "random", "random"
+  julia "random", "random", "~0.74543", 0.11301
+  julia "golden", "random", "~0.6180339887498948482045868343656381", 0.0
+  julia "pruim2", "random", "~0.5", (-1.0 / Math.sqrt(17.0)).to_s.gsub("-", "~")
   convert
 end
 
@@ -33,14 +36,13 @@ def convert
 end
 
 task :setup do
-  system "mkdir -p images"
+  sh "mkdir -p images"
 end
 
-def mandelbrot
-  sh "nofrac --color gray --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
-  sh "nofrac --color wb --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/white-mandelbrot.ppm"
+def mandelbrot(name, color)
+  sh "nofrac --color #{color} --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/mandelbrot-#{name}.ppm"
 end
 
 def julia(name, color, cx, cy)
-  sh "nofrac --color #{color} #{cx} #{cy} ~2.0 ~1.5 2.0 1.5 > images/#{name}.ppm"
+  sh "nofrac --color #{color} #{cx} #{cy} ~2.0 ~1.5 2.0 1.5 > images/julia-#{name}.ppm"
 end
