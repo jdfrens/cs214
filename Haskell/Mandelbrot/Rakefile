@@ -21,6 +21,11 @@ task :run => [:setup, :compile] do
   convert
 end
 
+task :quick => [:setup, :compile] do
+  sh "nofrac --color random --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/quick.ppm"
+  convert
+end  
+
 def convert
   Dir["images/*.ppm"].each do |filename|
     sh "convert #{filename} #{filename.gsub("ppm", "gif")}"
@@ -32,7 +37,7 @@ task :setup do
 end
 
 def mandelbrot
-  sh "nofrac --color bw --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
+  sh "nofrac --color gray --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/black-mandelbrot.ppm"
   sh "nofrac --color wb --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/white-mandelbrot.ppm"
 end
 

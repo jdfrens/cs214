@@ -3,6 +3,8 @@ where
 
 import System.Console.GetOpt
 import PPM
+
+import Fractals
                                                                           
 
 data Options = Options  { optWidth    :: Integer
@@ -25,9 +27,14 @@ options =
     heightFunc arg opt = return opt { optHeight = read arg }
     colorFunc "bw" opt = return opt { optColor = blackOnWhite }
     colorFunc "wb" opt = return opt { optColor = whiteOnBlack }
+    colorFunc "gray" opt = return opt { optColor = grayScale }
+    colorFunc "random" opt = return opt { optColor = randomColors }
 
-coordinateParse string = read $ replace string
+parseCoordinates args = makePoints $ map floatParse args
   where
+    makePoints []         = []
+    makePoints (x:y:args) = makePoint x y : makePoints args
+    makePoint x y = Point x y
+    floatParse string = read $ replace string
     replace ('~':chs) = '-':chs
-    replace xs        = xs
-
+    replace chs       = chs
