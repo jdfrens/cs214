@@ -2,17 +2,16 @@ module Options
 where
 
 import System.Console.GetOpt
-import PPM
+import Complex
 
+import PPM
 import Fractals
                                                                           
 
-data Options = Options  { optWidth    :: Integer
-                        , optHeight   :: Integer
+data Options = Options  { optSize     :: Dimension Integer
                         , optColor    :: Integer -> String
                         }
-startOptions = Options  { optWidth  = 512
-                        , optHeight = 384
+startOptions = Options  { optSize   = Dimension 512 384
                         , optColor  = blackOnWhite
                         }
 
@@ -23,18 +22,24 @@ options =
   , Option "c" ["color"] (ReqArg colorFunc "COLOR") "color map"
   ]
   where
-    widthFunc arg opt = return opt { optWidth = read arg }
-    heightFunc arg opt = return opt { optHeight = read arg }
-    colorFunc "bw" opt = return opt { optColor = blackOnWhite }
-    colorFunc "wb" opt = return opt { optColor = whiteOnBlack }
-    colorFunc "gray" opt = return opt { optColor = grayScale }
-    colorFunc "random" opt = return opt { optColor = randomColors }
+    widthFunc arg opt =
+      case (optSize opt) of
+        Dimension _ height -> 
+          return opt { optSize = Dimension (read arg) height }
+    heightFunc arg opt =
+      case (optSize opt) of
+        Dimension width _ -> 
+          return opt { optSize = Dimension width (read arg) }
+    colorFunc color opt =
+      case color of
+        "bw"     -> return opt { optColor = blackOnWhite }
+        "wb"     -> return opt { optColor = whiteOnBlack }
+        "gray"   -> return opt { optColor = grayScale }
+        "random" -> return opt { optColor = randomColors }
 
 parseCoordinates args = makePoints $ map floatParse args
   where
     makePoints []         = []
-    makePoints (x:y:args) = makePoint x y : makePoints args
-    makePoint x y = Point x y
-    floatParse string = read $ replace string
-    replace ('~':chs) = '-':chs
-    replace chs       = chs
+    makePoints (x:y:args) = x :+ y : makePoints args
+    floatParse ('~':digits) = read $ '-':digits
+    floatParse string = read string

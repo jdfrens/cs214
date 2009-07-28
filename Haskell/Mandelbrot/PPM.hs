@@ -14,23 +14,25 @@ import Fractals
   
 ppmPrefix (Dimension width height) = ["P3", show width, show height, "256"]
 
+ppmEntry r g b = (show r) ++ " " ++ (show g) ++ " " ++ (show b)
+
 blackOnWhite 0 = "0 0 0"
 blackOnWhite _ = "256 256 256"
 
 whiteOnBlack 0 = "256 256 256"
 whiteOnBlack _ = "0 0 0"
 
-grayScale n = val ++ " " ++ val ++ " " ++ val
-  where val = show $ div (n * 256) 512
+grayScale n = ppmEntry val val val
+  where val = div (n * 256) 512
   
-red :: [Integer]
-red = randomRs (0, 256) (mkStdGen 8)
-green :: [Integer]
-green = randomRs (0, 256) (mkStdGen 88)
-blue :: [Integer]
-blue = randomRs (0, 256) (mkStdGen 888)
 randomColors n = 
   genericIndex colors  n
   where
-    colors = "0 0 0" : zipWith3 color red green blue
-    color r g b = (show r) ++ " " ++ (show g) ++ " " ++ (show b)
+    colors = "0 0 0" : zipWith3 ppmEntry reds greens blues
+    
+reds :: [Integer]
+reds = randomRs (0, 256) (mkStdGen 8)
+greens :: [Integer]
+greens = randomRs (0, 256) (mkStdGen 88)
+blues :: [Integer]
+blues = randomRs (0, 256) (mkStdGen 888)
