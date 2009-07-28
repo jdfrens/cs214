@@ -1,6 +1,6 @@
 {- 
-  For CS 214, Spring 2009
-  Version: April 17
+  For GRHUG
+  Version: July 2009
   Creative Commons Attribution-Share Alike 3.0 United States License
 -}
 
