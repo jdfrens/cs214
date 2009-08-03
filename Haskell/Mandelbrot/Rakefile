@@ -5,29 +5,82 @@ CLEAN.include('*~')
 CLOBBER.include('*.hi', '*.o', "a.out", "nofrac")
 CLOBBER.include("images/*")
 
-task :default => :run
+task :default => :all
 
+desc "compiles the nofrac executable with GHC"
 task :compile do
   ["nofrac.hs"].each do |source|
     sh "ghc -O2 --make #{source}"
   end
 end
 
-task :run => [:setup, :compile] do
-  mandelbrot "black", "bw"
-  mandelbrot "white", "wb"
-  mandelbrot "gray", "gray"
-  mandelbrot "random", "random"
-  julia "random", "random", "~0.74543", 0.11301
-  julia "golden", "random", "~0.6180339887498948482045868343656381", 0.0
-  julia "pruim2", "random", "~0.5", (-1.0 / Math.sqrt(17.0)).to_s.gsub("-", "~")
+desc "compiles and generates all fractals"
+task :all => [:setup, :compile] do
+  mandelbrots
+  julias
+  burningships
   convert
 end
 
-task :quick => [:setup, :compile] do
-  sh "nofrac --color random --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/quick.ppm"
+desc "generates mandelbrots"
+task :mandelbrots => [:setup, :compile]  do
+  mandelbrots
   convert
-end  
+end
+
+def mandelbrots
+  mandelbrot "black", "bw"
+  mandelbrot "white", "wb"
+  mandelbrot "gray", "gray"
+  mandelbrot "red", "red"
+  mandelbrot "green", "green"
+  mandelbrot "blue", "blue"
+  mandelbrot "random", "random"
+end
+
+desc "generates julia sets"
+task :julias => [:setup, :compile]  do
+  julias
+  convert
+end
+
+def julias
+  julia "random", "random", "-0.74543+0.11301i"
+  julia "golden", "random", "-0.6180339887498948482045868343656381+0.0i"
+  julia "pruim2", "random", "-0.5+#{-1.0 / Math.sqrt(17.0)}i"
+end
+
+desc "generates burning ships"
+task :burningships => [:setup, :compile] do
+  burningships
+  convert
+end
+
+def burningships
+  burningship "standard-red", "red", "-2.5+2.0i", "1.5+-1.0i"
+  burningship "zoom-red", "red", "-1.8+0.055i", "-1.7+-0.02i"
+  burningship "line-red", "red", "-1.67+0.013i", "-1.65+-0.002i"
+  burningship "standard-green", "green", "-2.5+2.0i", "1.5+-1.0i"
+  burningship "zoom-green", "green", "-1.8+0.055i", "-1.7+-0.02i"
+  burningship "line-green", "green", "-1.67+0.013i", "-1.65+-0.002i"
+  burningship "standard-blue", "blue", "-2.5+2.0i", "1.5+-1.0i"
+  burningship "zoom-blue", "blue", "-1.8+0.055i", "-1.7+-0.02i"
+  burningship "line-blue", "blue", "-1.67+0.013i", "-1.65+-0.002i"
+end
+
+task :quick => [:setup, :compile] do
+  sh "nofrac --color gray --size 512x384 --upperleft -2.0+1.2 --lowerright 1.2+-1.2i > images/quick.ppm"
+  convert
+end
+
+desc "converts PPM images into GIF"
+task :convert do
+  convert
+end
+
+task :setup do
+  sh "mkdir -p images"
+end
 
 def convert
   Dir["images/*.ppm"].each do |filename|
@@ -35,14 +88,14 @@ def convert
   end
 end
 
-task :setup do
-  sh "mkdir -p images"
-end
-
 def mandelbrot(name, color)
-  sh "nofrac --color #{color} --width 512 --height 384 ~2.0 ~1.2 1.2 1.2 > images/mandelbrot-#{name}.ppm"
+  sh "nofrac --type mandelbrot --color #{color} --size 512x384 --upperleft -2.0+1.2i --lowerright 1.2+-1.2i > images/mandelbrot-#{name}.ppm"
 end
 
-def julia(name, color, cx, cy)
-  sh "nofrac --color #{color} #{cx} #{cy} ~2.0 ~1.5 2.0 1.5 > images/julia-#{name}.ppm"
+def julia(name, color, c)
+  sh "nofrac --type julia --color #{color} -c #{c} --upperleft -2.0+1.5i --lowerright 2.0+-1.5i > images/julia-#{name}.ppm"
+end
+
+def burningship(name, color, upperleft, lowerright)
+  sh "nofrac --type burningship --color #{color} --size 512x384 --upperleft #{upperleft} --lowerright #{lowerright} > images/burningship-#{name}.ppm"
 end

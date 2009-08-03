@@ -9,43 +9,86 @@ where
 
 import System.Console.GetOpt
 import Complex
+import Text.Regex
 
 import PPM
 import Fractals
-                                                                          
+                       
+data FractalType = Mandelbrot | Julia | BurningShip                                                   
 
-data Options = Options  { optSize     :: Dimension Integer
-                        , optColor    :: Integer -> String
-                        }
-startOptions = Options  { optSize   = Dimension 512 384
-                        , optColor  = blackOnWhite
+data Options a = Options { 
+    optFractal  :: FractalType
+  , optSize     :: Dimension Integer
+  , optColor    :: SetMembership (Complex a) Integer -> String
+  , optUpperLeft  :: Complex a
+  , optLowerRight :: Complex a
+  , optC          :: Complex a
+  , optZ          :: Complex a
+  , optR          :: Complex a
+  , optP          :: Complex a
+  }
+defaultOptions = Options  { optFractal = Mandelbrot
+                        , optSize    = Dimension 512 384
+                        , optColor   = blackOnWhite
+                        , optUpperLeft  = (negate 2.0) :+ 1.2
+                        , optLowerRight = 1.2 :+ (negate 1.2)
+                        , optC = 1.0 :+ 0.0
+                        , optZ = 0.0 :+ 0.0
+                        , optR = 0.0 :+ 0.0
+                        , optP = 0.0 :+ 0.0
                         }
 
-options :: (Monad m) => [OptDescr (Options -> m Options)]
+options :: (Monad m, RealFloat a, Read a) => [OptDescr (Options a -> m (Options a))]
 options =
-  [ Option "w" ["width"] (ReqArg widthFunc "WIDTH") "width of image"
-  , Option "h" ["height"] (ReqArg heightFunc "HEIGHT") "height of image"
-  , Option "c" ["color"] (ReqArg colorFunc "COLOR") "color map"
+  [ Option "t" ["type"] (ReqArg typeFunc "TYPE") "type of fractal"
+  , Option "s" ["size"] (ReqArg sizeFunc "WIDTHxHEIGHT") "size of image"
+  , Option ""  ["color"] (ReqArg colorFunc "COLOR") "color map"
+  , Option ""  ["upperleft"] (ReqArg upperLeftFunc "UPPERLEFT") "upper left corner"
+  , Option ""  ["lowerright"] (ReqArg lowerRightFunc "LOWERRIGHT") "lower right corner"
+  , Option "c" [] (ReqArg cFunc "UPPERLEFT") "constant c"
+  , Option "z" [] (ReqArg zFunc "UPPERLEFT") "constant z"
+  , Option "r" [] (ReqArg rFunc "UPPERLEFT") "constant r"
+  , Option "p" [] (ReqArg pFunc "UPPERLEFT") "constant p"
   ]
   where
-    widthFunc arg opt =
-      case (optSize opt) of
-        Dimension _ height -> 
-          return opt { optSize = Dimension (read arg) height }
-    heightFunc arg opt =
-      case (optSize opt) of
-        Dimension width _ -> 
-          return opt { optSize = Dimension width (read arg) }
+    typeFunc t opt =
+      return opt {
+        optFractal = case t of
+          "mandelbrot"  -> Mandelbrot
+          "julia"       -> Julia
+          "burningship" -> BurningShip
+      }
+    sizeFunc arg opt = return opt { optSize = parseSize arg }
+    upperLeftFunc arg opt = return opt { optUpperLeft = parseComplex arg }
+    lowerRightFunc arg opt = return opt { optLowerRight = parseComplex arg }
+    cFunc arg opt = return opt { optC = parseComplex arg }
+    zFunc arg opt = return opt { optZ = parseComplex arg }
+    rFunc arg opt = return opt { optR = parseComplex arg }
+    pFunc arg opt = return opt { optP = parseComplex arg }
     colorFunc color opt =
-      case color of
-        "bw"     -> return opt { optColor = blackOnWhite }
-        "wb"     -> return opt { optColor = whiteOnBlack }
-        "gray"   -> return opt { optColor = grayScale }
-        "random" -> return opt { optColor = randomColors }
+      return opt { 
+        optColor = case color of
+          "bw"     -> blackOnWhite
+          "wb"     -> whiteOnBlack
+          "gray"   -> grayScale
+          "red"    -> redScale
+          "green"  -> greenScale
+          "blue"   -> blueScale
+          "random" -> randomColors
+      }
+      
+parseSize str =
+  case regexMatch of
+    Nothing      -> error $ show str ++ " not a valid size (width x height)"
+    Just matches -> let vals = map read matches
+                    in Dimension (vals !! 0) (vals !! 1)
+    where
+      regexMatch = matchRegex (mkRegex "^([0-9.]+)x([0-9.]+)$") str  
 
-parseCoordinates args = makePoints $ map floatParse args
-  where
-    makePoints []         = []
-    makePoints (x:y:args) = x :+ y : makePoints args
-    floatParse ('~':digits) = read $ '-':digits
-    floatParse string = read string
+parseComplex str = 
+  case regexMatch of
+    Nothing      -> error $ show str ++ " not a valid complex number"
+    Just matches -> let vals = map read matches
+                    in (vals !! 0) :+ (vals !! 1)
+    where
+      regexMatch = matchRegex (mkRegex "^([-]?[0-9.]+)[+]([-]?[0-9.]+)i$") str

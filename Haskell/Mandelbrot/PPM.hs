@@ -4,35 +4,80 @@
   Creative Commons Attribution-Share Alike 3.0 United States License
 -}
 
-module PPM (ppmPrefix, blackOnWhite, whiteOnBlack, grayScale, randomColors)
+module PPM (ppmPrefix, 
+            blackOnWhite, whiteOnBlack, 
+            grayScale, redScale, greenScale, blueScale,
+            randomColors)
 where
   
 import System.Random
 import Data.List
+import Complex
 
 import Fractals
-  
-ppmPrefix (Dimension width height) = ["P3", show width, show height, "256"]
 
+max_color = 255
+  
+ppmPrefix (Dimension width height) =
+  ["P3", show width, show height, show max_color]
+
+ppmEntry :: Integer -> Integer -> Integer -> String
 ppmEntry r g b = (show r) ++ " " ++ (show g) ++ " " ++ (show b)
+ppmEntryGray n = ppmEntry n n n
 
-blackOnWhite 0 = "0 0 0"
-blackOnWhite _ = "256 256 256"
+white = ppmEntryGray max_color
+black = ppmEntryGray 0
 
-whiteOnBlack 0 = "256 256 256"
-whiteOnBlack _ = "0 0 0"
+-----------------------------------------------------------
+-- helpers
+-----------------------------------------------------------
+smoother z n = fromInteger n + 1.0 - log (log  (magnitude z)) / log 2.0
 
-grayScale n = ppmEntry val val val
-  where val = div (n * 256) 512
-  
-randomColors n = 
-  genericIndex colors  n
+
+-----------------------------------------------------------
+-- black, white, and gray
+-----------------------------------------------------------
+blackOnWhite Inside = black
+blackOnWhite (Outside _ _) = white
+
+whiteOnBlack Inside = white
+whiteOnBlack (Outside _ _) = black
+
+grayScale Inside = black
+grayScale (Outside z n) = ppmEntryGray val
   where
-    colors = "0 0 0" : zipWith3 ppmEntry reds greens blues
+    val = round $ fromInteger max_color * (sqrt $ fromInteger n / fromInteger max_iters)^2
+
+
+-----------------------------------------------------------
+-- basic primary-color scales
+-- coloring scheme from http://warp.povusers.org/Mandelbrot/
+-----------------------------------------------------------
+redScale   = povScale (\c -> ppmEntry c 0 0) (\c -> ppmEntry max_color c c)
+greenScale = povScale (\c -> ppmEntry 0 c 0) (\c -> ppmEntry c max_color c)
+blueScale  = povScale (\c -> ppmEntry 0 0 c) (\c -> ppmEntry c c max_color)
+
+povScale _ _ Inside = black
+povScale plateau border (Outside _ n)
+  | n < half_iters = plateau (scaleIter n)
+  | otherwise      = border $ scaleIter $ n - half_iters
+  where
+    half_iters = (div max_iters 2) - 1
+    scaleIter i = round $ iterRatio i * fromInteger max_color
+    iterRatio i = fromInteger (2*(i-1)) / fromInteger max_iters
+
+
+-----------------------------------------------------------
+-- random colors
+-----------------------------------------------------------
+randomColors Inside = black  
+randomColors (Outside _ n) = 
+  genericIndex colors n
     
+colors = zipWith3 ppmEntry reds greens blues    
 reds :: [Integer]
-reds = randomRs (0, 256) (mkStdGen 8)
+reds = randomRs (0, max_color) (mkStdGen 8)
 greens :: [Integer]
-greens = randomRs (0, 256) (mkStdGen 88)
+greens = randomRs (0, max_color) (mkStdGen 88)
 blues :: [Integer]
-blues = randomRs (0, 256) (mkStdGen 888)
+blues = randomRs (0, max_color) (mkStdGen 888)

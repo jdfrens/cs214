@@ -18,15 +18,17 @@ main :: IO ()
 main = do
   args <- getArgs
   let (actions, nonOptions, errors) = getOpt RequireOrder options args
-  opts <- foldl (>>=) (return startOptions) actions
-  let coordinates = parseCoordinates nonOptions    
+  opts <- foldl (>>=) (return defaultOptions) actions
   mapM_ putStrLn $ ppmPrefix (optSize opts)
-  mapM_ putStrLn $ generate (optSize opts) (optColor opts) coordinates
-    
--- two coordinates means mandelbrot
-generate size color [upperLeft, lowerRight] = 
-  plot mandelbrot color size upperLeft lowerRight
--- three coordinates means julia
-generate size color [c, upperLeft, lowerRight] = 
-  plot (julia c) color size upperLeft lowerRight
-generate _ _ args = error $ show args ++ " not valid coordinates"
+  mapM_ putStrLn $ color opts $ generate opts
+
+color opts = map (optColor opts)
+
+generate opts = 
+  plot (plotter opts) (optSize opts) (optUpperLeft opts) (optLowerRight opts)
+    where
+      plotter opts =
+        case (optFractal opts) of
+          Mandelbrot  -> mandelbrot
+          BurningShip -> burningShip
+          Julia       -> julia (optC opts)
