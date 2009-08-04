@@ -14,7 +14,7 @@ import Text.Regex
 import PPM
 import Fractals
                        
-data FractalType = Mandelbrot | Julia | BurningShip                                                   
+data FractalType = Mandelbrot | Julia | BurningShip | Newton                                                
 
 data Options a = Options { 
     optFractal  :: FractalType
@@ -57,6 +57,7 @@ options =
           "mandelbrot"  -> Mandelbrot
           "julia"       -> Julia
           "burningship" -> BurningShip
+          "newton"      -> Newton
       }
     sizeFunc arg opt = return opt { optSize = parseSize arg }
     upperLeftFunc arg opt = return opt { optUpperLeft = parseComplex arg }

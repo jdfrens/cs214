@@ -32,3 +32,4 @@ generate opts =
           Mandelbrot  -> mandelbrot
           BurningShip -> burningShip
           Julia       -> julia (optC opts)
+          Newton      -> newton (\z -> z^3 - 1) (\z -> 3.0 * z^2)

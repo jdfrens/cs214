@@ -74,7 +74,7 @@ randomColors Inside = black
 randomColors (Outside _ n) = 
   genericIndex colors n
     
-colors = zipWith3 ppmEntry reds greens blues    
+colors = zipWith3 ppmEntry reds greens blues 
 reds :: [Integer]
 reds = randomRs (0, max_color) (mkStdGen 8)
 greens :: [Integer]
