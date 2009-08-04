@@ -77,7 +77,9 @@ task :newtons => [:setup, :compile] do
 end
 
 def newtons
-  newton "standard-random", "random"
+  newton "standard-random-666", "random", 666
+  newton "standard-random-008", "random", 8
+  newton "standard-random-042", "random", 42
 end
 
 task :quick => [:setup, :compile] do
@@ -108,8 +110,8 @@ def julia(name, color, c)
   sh "nofrac --type julia --color #{color} -c #{c} --upperleft -2.0+1.5i --lowerright 2.0+-1.5i > images/julia-#{name}.ppm"
 end
 
-def newton(name, color)
-  sh "nofrac --type newton --color #{color} --upperleft -2.0+1.5i --lowerright 2.0+-1.5i > images/newton-#{name}.ppm"
+def newton(name, color, seed)
+  sh "nofrac --type newton --seed #{seed} --color #{color} --upperleft -2.0+1.5i --lowerright 2.0+-1.5i > images/newton-#{name}.ppm"
 end
 
 def burningship(name, color, upperleft, lowerright)

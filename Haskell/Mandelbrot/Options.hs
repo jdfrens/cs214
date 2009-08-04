@@ -20,6 +20,7 @@ data Options a = Options {
     optFractal  :: FractalType
   , optSize     :: Dimension Integer
   , optColor    :: SetMembership (Complex a) Integer -> String
+  , optSeed     :: Int
   , optUpperLeft  :: Complex a
   , optLowerRight :: Complex a
   , optC          :: Complex a
@@ -30,6 +31,7 @@ data Options a = Options {
 defaultOptions = Options  { optFractal = Mandelbrot
                         , optSize    = Dimension 512 384
                         , optColor   = blackOnWhite
+                        , optSeed    = 666
                         , optUpperLeft  = (negate 2.0) :+ 1.2
                         , optLowerRight = 1.2 :+ (negate 1.2)
                         , optC = 1.0 :+ 0.0
@@ -43,6 +45,7 @@ options =
   [ Option "t" ["type"] (ReqArg typeFunc "TYPE") "type of fractal"
   , Option "s" ["size"] (ReqArg sizeFunc "WIDTHxHEIGHT") "size of image"
   , Option ""  ["color"] (ReqArg colorFunc "COLOR") "color map"
+  , Option ""  ["seed"]  (ReqArg seedFunc "SEED") "random seed"
   , Option ""  ["upperleft"] (ReqArg upperLeftFunc "UPPERLEFT") "upper left corner"
   , Option ""  ["lowerright"] (ReqArg lowerRightFunc "LOWERRIGHT") "lower right corner"
   , Option "c" [] (ReqArg cFunc "UPPERLEFT") "constant c"
@@ -66,6 +69,7 @@ options =
     zFunc arg opt = return opt { optZ = parseComplex arg }
     rFunc arg opt = return opt { optR = parseComplex arg }
     pFunc arg opt = return opt { optP = parseComplex arg }
+    seedFunc arg opt = return opt { optSeed = read arg }
     colorFunc color opt =
       return opt { 
         optColor = case color of
@@ -75,7 +79,7 @@ options =
           "red"    -> redScale
           "green"  -> greenScale
           "blue"   -> blueScale
-          "random" -> randomColors
+          "random" -> randomColors (randomColorsGenerator (optSeed opt))
       }
       
 parseSize str =

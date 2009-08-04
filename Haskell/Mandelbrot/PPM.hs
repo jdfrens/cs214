@@ -7,7 +7,7 @@
 module PPM (ppmPrefix, 
             blackOnWhite, whiteOnBlack, 
             grayScale, redScale, greenScale, blueScale,
-            randomColors)
+            randomColors, randomColorsGenerator)
 where
   
 import System.Random
@@ -70,14 +70,10 @@ povScale plateau border (Outside _ n)
 -----------------------------------------------------------
 -- random colors
 -----------------------------------------------------------
-randomColors Inside = black  
-randomColors (Outside _ n) = 
+randomColors _      Inside = black  
+randomColors colors (Outside _ n) = 
   genericIndex colors n
     
-colors = zipWith3 ppmEntry reds greens blues 
-reds :: [Integer]
-reds = randomRs (0, max_color) (mkStdGen 8)
-greens :: [Integer]
-greens = randomRs (0, max_color) (mkStdGen 88)
-blues :: [Integer]
-blues = randomRs (0, max_color) (mkStdGen 888)
+randomColorsGenerator seed = colorStream $ randomRs (0, max_color) (mkStdGen seed)
+  where
+    colorStream (r : g : b : rest) = ppmEntry r g b : colorStream rest
