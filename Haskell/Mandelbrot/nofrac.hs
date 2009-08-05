@@ -18,7 +18,7 @@ main :: IO ()
 main = do
   args <- getArgs
   let (actions, nonOptions, errors) = getOpt RequireOrder options args
-  opts <- foldl (>>=) (return defaultOptions) actions
+  let opts = foldl (flip ($)) defaultOptions actions
   mapM_ putStrLn $ ppmPrefix (optSize opts)
   mapM_ putStrLn $ color opts $ generate opts
 

@@ -70,9 +70,8 @@ povScale plateau border (Outside _ n)
 -----------------------------------------------------------
 -- random colors
 -----------------------------------------------------------
-randomColors _      Inside = black  
-randomColors colors (Outside _ n) = 
-  genericIndex colors n
+randomColors _      Inside        = black  
+randomColors colors (Outside _ n) = genericIndex colors n
     
 randomColorsGenerator seed = colorStream $ randomRs (0, max_color) (mkStdGen seed)
   where

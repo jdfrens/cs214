@@ -40,7 +40,6 @@ defaultOptions = Options  { optFractal = Mandelbrot
                         , optP = 0.0 :+ 0.0
                         }
 
-options :: (Monad m, RealFloat a, Read a) => [OptDescr (Options a -> m (Options a))]
 options =
   [ Option "t" ["type"] (ReqArg typeFunc "TYPE") "type of fractal"
   , Option "s" ["size"] (ReqArg sizeFunc "WIDTHxHEIGHT") "size of image"
@@ -55,23 +54,23 @@ options =
   ]
   where
     typeFunc t opt =
-      return opt {
+      opt {
         optFractal = case t of
           "mandelbrot"  -> Mandelbrot
           "julia"       -> Julia
           "burningship" -> BurningShip
           "newton"      -> Newton
       }
-    sizeFunc arg opt = return opt { optSize = parseSize arg }
-    upperLeftFunc arg opt = return opt { optUpperLeft = parseComplex arg }
-    lowerRightFunc arg opt = return opt { optLowerRight = parseComplex arg }
-    cFunc arg opt = return opt { optC = parseComplex arg }
-    zFunc arg opt = return opt { optZ = parseComplex arg }
-    rFunc arg opt = return opt { optR = parseComplex arg }
-    pFunc arg opt = return opt { optP = parseComplex arg }
-    seedFunc arg opt = return opt { optSeed = read arg }
+    sizeFunc arg opt = opt { optSize = parseSize arg }
+    upperLeftFunc arg opt = opt { optUpperLeft = parseComplex arg }
+    lowerRightFunc arg opt = opt { optLowerRight = parseComplex arg }
+    cFunc arg opt = opt { optC = parseComplex arg }
+    zFunc arg opt = opt { optZ = parseComplex arg }
+    rFunc arg opt = opt { optR = parseComplex arg }
+    pFunc arg opt = opt { optP = parseComplex arg }
+    seedFunc arg opt = opt { optSeed = read arg }
     colorFunc color opt =
-      return opt { 
+      opt { 
         optColor = case color of
           "bw"     -> blackOnWhite
           "wb"     -> whiteOnBlack
