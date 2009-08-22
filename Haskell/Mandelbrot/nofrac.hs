@@ -20,9 +20,9 @@ main = do
   let (actions, nonOptions, errors) = getOpt RequireOrder options args
   let opts = foldl (flip ($)) defaultOptions actions
   mapM_ putStrLn $ ppmPrefix (optSize opts)
-  mapM_ putStrLn $ color opts $ generate opts
+  mapM_ (mapM_ putStrLn) $ color opts $ generate opts
 
-color opts = map (optColor opts)
+color opts = map (map (optColor opts))
 
 generate opts = 
   plot (plotter opts) (optSize opts) (optUpperLeft opts) (optLowerRight opts)

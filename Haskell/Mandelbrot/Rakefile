@@ -10,7 +10,7 @@ task :default => :all
 desc "compiles the nofrac executable with GHC"
 task :compile do
   ["nofrac.hs"].each do |source|
-    sh "ghc -O2 --make #{source}"
+    sh "ghc -O2 -threaded --make #{source}"
   end
 end
 
@@ -66,6 +66,12 @@ def burningships
   end
 end
 
+desc "Parallel generation of burning ships"
+task :parallel => [:setup, :compile] do
+  parallel
+  convert
+end
+
 desc "generates newton-method fractals"
 task :newtons => [:setup, :compile] do
   newtons
@@ -79,22 +85,26 @@ def newtons
 end
 
 task :quick => [:setup, :compile] do
-  sh "nofrac --color gray --size 512x384 --upperleft -2.0+1.2 --lowerright 1.2+-1.2i > images/quick.ppm"
+  sh "nofrac --color green --size 512x384 --upperleft -2.0+1.2i --lowerright 1.2+-1.2i > images/quick.ppm"
   convert
 end
 
+gifs = Dir["images/*.ppm"].map { |f| f.gsub("ppm", "gif") }
+
 desc "converts PPM images into GIF"
-task :convert do
-  convert
-end
+task :convert => gifs
 
 task :setup do
   sh "mkdir -p images"
 end
 
+rule '.gif' => '.ppm' do |t|
+  sh "convert #{t.source} #{t.name}"
+end
+
 def convert
-  Dir["images/*.ppm"].each do |filename|
-    sh "convert #{filename} #{filename.gsub("ppm", "gif")}"
+  Dir["images/*.ppm"].each do |file|
+    Rake::Task[file.gsub("ppm", "gif")].invoke
   end
 end
 
@@ -112,4 +122,10 @@ end
 
 def burningship(name, color, upperleft, lowerright)
   sh "./nofrac --type burningship --color #{color} --size 1024x768 --upperleft #{upperleft} --lowerright #{lowerright} > images/burningship-#{name}.ppm"
+end
+
+def parallel
+  [1, 2, 3, 4].each do |procs|
+    sh "time ./nofrac +RTS -N#{procs} -RTS --type burningship --color green --size 2048x1536 --upperleft -1.8+0.055i --lowerright -1.7+-0.02i > images/burningship-p#{procs}.ppm"
+  end
 end

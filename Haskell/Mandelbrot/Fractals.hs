@@ -15,6 +15,7 @@ module Fractals
   
 import List
 import Complex
+import Control.Parallel.Strategies
 
 data Dimension a = Dimension a a
   deriving (Show, Eq)
@@ -32,7 +33,7 @@ plot f (Dimension width height) (x0 :+ y0) (x1 :+ y1) =
     ys = [y0, y0 + delta_y..y1]
     xs = [x0, x0 + delta_x..x1]
   in
-    map f [ x :+ y | y <- ys, x <- xs ]
+    parMap rwhnf (\y -> map (\x -> f $ x :+ y) xs) ys
 
 -----------------------------------------------------------
 -- initial conditions and iterators for fractals
