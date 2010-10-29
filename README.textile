@@ -1,6 +1,6 @@
 h1. Code Examples for CS 214
 
-The code in these directories are used in "CS 214: Programming Languages":http://cs.calvin.edu/~cs214 at "Calvin College":http://cs.calvin.edu.
+The code in these directories were used during Spring 2009 in CS 214: Programming Languages at "Calvin College":http://cs.calvin.edu.
 
 Many design and coding decisions have been made for pedagogical reasons.
 
